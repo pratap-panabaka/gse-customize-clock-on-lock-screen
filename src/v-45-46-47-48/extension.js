@@ -3,7 +3,6 @@ import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import ModifiedClock from './ModifiedClock.js';
 
-
 export default class CustomizeClockOnLockScreenExtension extends Extension {
     enable() {
         this._settings = this.getSettings();
@@ -22,7 +21,7 @@ export default class CustomizeClockOnLockScreenExtension extends Extension {
     disable() {
         this._dialog._stack.remove_child(this._dialog._clock);
         this._dialog._stack.add_child(this._originalClock);
-        this._dialog._clock._onDestroy();
+        this._dialog._clock.destroy();
         this._dialog._clock = null;
         this._dialog = null;
 

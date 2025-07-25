@@ -1,7 +1,19 @@
-# Customize Clock on GDM Lock Screen
+### Customize Clock On Lock Screen - Extension (GNOME V45 and above)
 
-![Screenshot from 2024-08-23 21-49-12](https://github.com/user-attachments/assets/0aaf0443-1f15-4e4a-964a-550f834a6a66)
+### Install
+```
+git clone https://github.com/pratap-panabaka/gse-customize-clock-on-lock-screen
+cd gse-customize-clock-on-lock-screen
+./install.sh
+```
 
-![image](https://github.com/user-attachments/assets/592abecd-5097-417b-915c-2f6809960af8)
+### Uninstall
+```
+./uninstall.sh
+```
 
-![image](https://github.com/user-attachments/assets/2db129b1-af51-4045-8605-6069c6bdd3ab)
+<hr/>
+
+[![Buy Me A Coffee](https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=☕&slug=pratap.panabaka&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff)](https://www.buymeacoffee.com/pratap.panabaka)
+
+
