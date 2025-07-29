@@ -44,7 +44,6 @@ export default class CustomizeClockOnLockScreenExtension extends Extension {
             this._screenShieldDialog._stack.add_child(this._screenShieldDialog._clock); //
 
             this._screenShieldDialog._promptBox.set_y_align(Clutter.ActorAlign.CENTER);
-            this._screenShieldDialog._stack.set_style('border: 2px solid orangered');
         }
     }
 
