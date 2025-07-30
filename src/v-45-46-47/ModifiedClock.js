@@ -4,7 +4,8 @@ import GnomeDesktop from 'gi://GnomeDesktop';
 import Clutter from 'gi://Clutter';
 import Shell from 'gi://Shell';
 
-import {formatDateWithCFormatString} from 'resource:///org/gnome/shell/misc/dateUtils.js';
+import { formatDateWithCFormatString } from 'resource:///org/gnome/shell/misc/dateUtils.js';
+import execCommunicate from './utils/getCommandOutput.js';
 
 const HINT_TIMEOUT = 4;
 const CROSSFADE_TIME = 300;
@@ -12,12 +13,32 @@ const CROSSFADE_TIME = 300;
 const ModifiedClock = GObject.registerClass(
     class ModifiedClock extends St.BoxLayout {
         _init(settings) {
-            super._init({style_class: 'unlock-dialog-clock', vertical: true});
+            super._init({
+                style_class: 'unlock-dialog-clock',
+                vertical: true,
+                y_align: Clutter.ActorAlign.CENTER,
+            });
 
             this._settings = settings;
             this._customStyle = this._settings.get_boolean('custom-style');
             this._customizeClock = this._settings.get_string('custom-time-text');
             this._customizeDate = this._settings.get_string('custom-date-text');
+
+            this._commandText = new St.Label({
+                style_class: 'unlock-dialog-clock-date',
+                x_align: Clutter.ActorAlign.CENTER,
+            });
+
+            this._commandText.set_style(this._customStyle
+                ? `color: ${this._settings.get_string('custom-command-font-color')};
+                        font-size: ${this._settings.get_int('custom-command-font-size')}px;
+                        font-family: ${this._settings.get_string('font-style')}, serif;
+                        text-align: center;
+                        `
+                : null
+            );
+
+            this._commandText.clutter_text.set_line_wrap(true);
 
             this._time = new St.Label({
                 style_class: this._customStyle ? null : 'unlock-dialog-clock-time',
@@ -60,9 +81,15 @@ const ModifiedClock = GObject.registerClass(
                     : null
             );
 
+            const removeCustomCommand = this._settings.get_boolean('remove-custom-command-output');
             const removeTime = this._settings.get_boolean('remove-time');
             const removeDate = this._settings.get_boolean('remove-date');
             const removeHint = this._settings.get_boolean('remove-hint');
+
+            if (!removeCustomCommand) {
+                this.add_child(this._commandText);
+                this._createCommandText();
+            }
 
             if (!removeTime)
                 this.add_child(this._time);
@@ -73,7 +100,7 @@ const ModifiedClock = GObject.registerClass(
             if (!removeHint)
                 this.add_child(this._hint);
 
-            this._wallClock = new GnomeDesktop.WallClock({time_only: true});
+            this._wallClock = new GnomeDesktop.WallClock({ time_only: true });
             this._wallClock.connect('notify::clock', this._updateClock.bind(this));
 
             this._seat = Clutter.get_default_backend().get_default_seat();
@@ -94,6 +121,16 @@ const ModifiedClock = GObject.registerClass(
 
             this._updateClock();
             this._updateHint();
+        }
+
+        async _createCommandText() {
+            try {
+                const text = await execCommunicate(this._settings.get_string('custom-command').split(' '));
+                this._commandText.text = text;
+            } catch (e) {
+                console.log(e);
+                this._commandText.text = 'Sorry Command Output has thrown error'
+            }
         }
 
         _updateClock() {

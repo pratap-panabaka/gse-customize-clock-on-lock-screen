@@ -3,26 +3,40 @@ import Gtk from 'gi://Gtk';
 import Gdk from 'gi://Gdk';
 import Gio from 'gi://Gio';
 
-import {ExtensionPreferences} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 import FontsPrefsWidget from './utils/fontsPreferencesWidget.js';
 
 export default class CustomizeClockExtensionPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
         window._settings = this.getSettings();
+        window._customCommandColorButton = new Gtk.ColorButton();
         window._timeColorButton = new Gtk.ColorButton();
         window._dateColorButton = new Gtk.ColorButton();
         window._hintColorButton = new Gtk.ColorButton();
 
+        setButtonColor(window._customCommandColorButton, 'custom-command-font-color');
         setButtonColor(window._timeColorButton, 'time-color');
         setButtonColor(window._dateColorButton, 'date-color');
         setButtonColor(window._hintColorButton, 'hint-color');
 
+        window._fontSizeCustomCommandAdjustButton = new Gtk.SpinButton();
         window._fontSizeTimeAdjustButton = new Gtk.SpinButton();
         window._fontSizeDateAdjustButton = new Gtk.SpinButton();
         window._fontSizeHintAdjustButton = new Gtk.SpinButton();
 
         const colorButton = (button, id) => {
             return selectButtonColor(button, id);
+        };
+
+        const AdjustFontSizeCustomCommand = () => {
+            window._fontSizeCustomCommandAdjustButton.set_range(24, 96);
+            window._fontSizeCustomCommandAdjustButton.set_increments(2, 4);
+            window._fontSizeCustomCommandAdjustButton.set_value(window._settings.get_int('custom-command-font-size'));
+            window._fontSizeCustomCommandAdjustButton.connect('value-changed', entry => {
+                window._settings.set_int('custom-command-font-size', entry.get_value());
+            });
+
+            return window._fontSizeCustomCommandAdjustButton;
         };
 
         const AdjustFontSizeTime = () => {
@@ -84,6 +98,19 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
             return textUrlEntry;
         };
 
+        const CustomCommandText = () => {
+            let textUrlEntry = new Gtk.Entry();
+            textUrlEntry.set_width_chars(40);
+            textUrlEntry.set_placeholder_text('here input your command for example "uname -r || fortune');
+
+            textUrlEntry.set_text(window._settings.get_string('custom-command'));
+            textUrlEntry.connect('changed', entry => {
+                window._settings.set_string('custom-command', entry.get_text());
+            });
+
+            return textUrlEntry;
+        };
+
         const addTip = () => {
             let url = 'https://help.gnome.org/users/gthumb/stable/gthumb-date-formats.html.en';
             let linkButton = Gtk.LinkButton.new_with_label(url, 'Web link for valid Date/Time Format Codes');
@@ -94,6 +121,11 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         const customStyling = new Adw.SwitchRow({
             title: 'Apply below custom styling',
         });
+
+        const customCommandTextColorRow = new Adw.ActionRow({
+            title: 'Custom Command Output font color',
+        });
+        customCommandTextColorRow.add_suffix(colorButton(window._customCommandColorButton, 'custom-command-font-color'));
 
         const timeColorRow = new Adw.ActionRow({
             title: 'Time font color',
@@ -110,20 +142,26 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         });
         hintColorRow.add_suffix(colorButton(window._hintColorButton, 'hint-color'));
 
+        const customCommandFontSizeRow = new Adw.ActionRow({
+            title: 'Custom Command Font Size in Pixels',
+        });
+        customCommandFontSizeRow.add_suffix(AdjustFontSizeCustomCommand());
+        customCommandFontSizeRow.add_suffix(ResetFontSize(window._fontSizeCustomCommandAdjustButton, 'custom-command-font-size', 32));
+
         const timeFontSizeRow = new Adw.ActionRow({
-            title: 'Time Size in Pixels',
+            title: 'Time Font Size in Pixels',
         });
         timeFontSizeRow.add_suffix(AdjustFontSizeTime());
         timeFontSizeRow.add_suffix(ResetFontSize(window._fontSizeTimeAdjustButton, 'time-size', 96));
 
         const dateFontSizeRow = new Adw.ActionRow({
-            title: 'Date Size in Pixels',
+            title: 'Date Font Size in Pixels',
         });
         dateFontSizeRow.add_suffix(AdjustFontSizeDate());
         dateFontSizeRow.add_suffix(ResetFontSize(window._fontSizeDateAdjustButton, 'date-size', 27));
 
         const hintFontSizeRow = new Adw.ActionRow({
-            title: 'Hint Size in Pixels',
+            title: 'Hint Font Size in Pixels',
         });
         hintFontSizeRow.add_suffix(AdjustFontSizeHint());
         hintFontSizeRow.add_suffix(ResetFontSize(window._fontSizeHintAdjustButton, 'hint-size', 20));
@@ -138,10 +176,19 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         });
         customDateText.add_suffix(CustomDateText());
 
+        const customCommandText = new Adw.ActionRow({
+            title: 'Custom Command',
+        });
+        customCommandText.add_suffix(CustomCommandText());
+
         const hintRow = new Adw.ActionRow({
             title: 'Gnome Time Date Format Help Link',
         });
         hintRow.add_suffix(addTip());
+
+        const removeCustomCommandOutput = new Adw.SwitchRow({
+            title: 'Remove Custom Command Output',
+        });
 
         const removeTime = new Adw.SwitchRow({
             title: 'Remove Time',
@@ -178,28 +225,33 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         page.add(new FontsPrefsWidget(window._settings));
         //
 
+        removeGroup.add(removeCustomCommandOutput);
         removeGroup.add(removeTime);
         removeGroup.add(removeDate);
         removeGroup.add(removeHint);
 
         customStyleGroup.add(customStyling);
+        customStyleGroup.add(customCommandTextColorRow);
         customStyleGroup.add(timeColorRow);
         customStyleGroup.add(dateColorRow);
         customStyleGroup.add(hintColorRow);
+        customStyleGroup.add(customCommandFontSizeRow);
         customStyleGroup.add(timeFontSizeRow);
         customStyleGroup.add(dateFontSizeRow);
         customStyleGroup.add(hintFontSizeRow);
 
+        customTextGroup.add(customCommandText);
         customTextGroup.add(customTimeText);
         customTextGroup.add(customDateText);
         customTextGroup.add(hintRow);
 
         window._settings.bind('custom-style', customStyling, 'active', Gio.SettingsBindFlags.DEFAULT);
+        window._settings.bind('remove-custom-command-output', removeCustomCommandOutput, 'active', Gio.SettingsBindFlags.DEFAULT);
         window._settings.bind('remove-time', removeTime, 'active', Gio.SettingsBindFlags.DEFAULT);
         window._settings.bind('remove-date', removeDate, 'active', Gio.SettingsBindFlags.DEFAULT);
         window._settings.bind('remove-hint', removeHint, 'active', Gio.SettingsBindFlags.DEFAULT);
 
-        window.maximize();
+        window.set_default_size(800, 1000);
 
         // helper functions
 
@@ -238,7 +290,7 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
          * @param {string} id 'id'
          */
         function selectButtonColor(button, id) {
-            let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, halign: Gtk.Align.END});
+            let hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, halign: Gtk.Align.END });
             button.connect('notify::rgba', () => onPanelColorChanged(button, id));
             hbox.append(button);
 
