@@ -11,7 +11,7 @@ class CreateGroup extends Adw.PreferencesGroup {
         GObject.registerClass(this);
     }
 
-    constructor(title, description, settings, keysArray) {
+    constructor(title, description, settings, keysArray, hintText) {
         super({
             title,
             description,
@@ -21,22 +21,23 @@ class CreateGroup extends Adw.PreferencesGroup {
 
         const [remove, color, size, text, fontStyle] = keysArray;
 
-        this._removeRow = new Adw.SwitchRow({ title: 'Remove' }); // 1 - remove row
+        this._removeRow = new Adw.SwitchRow({title: 'Remove'}); // 1 - remove row
 
         let rgba = new Gdk.RGBA();
         let boolean = rgba.parse(this._settings.get_string(color));
         if (!boolean)
-            rgba.parse('#456789ff');
+            rgba.parse('#ABCDEF00');
 
 
         this._colorButton = new Gtk.ColorDialogButton({
             dialog: new Gtk.ColorDialog(),
             rgba,
         });
-        this._colorButton.connect('notify::rgba', this._onPanelColorChanged.bind(this));
+        this._colorButton.connect('notify::rgba', this._onPanelColorChanged.bind(this, color));
 
-        this._colorRow = new Adw.ActionRow({ title: 'Color' }); // 2 - font color row
+        this._colorRow = new Adw.ActionRow({title: 'Color'}); // 2 - font color row
         this._colorRow.add_suffix(this._colorButton);
+        this._colorRow.add_suffix(this._resetColorButton(this._colorButton, color));
 
         this._fontSizeAdjustment = new Gtk.Adjustment({
             lower: 24,
@@ -49,18 +50,18 @@ class CreateGroup extends Adw.PreferencesGroup {
             this._settings.set_int(size, entry.get_value());
         });
 
-        this._fontSizeRow = new Adw.SpinRow({ title: 'Font Size', adjustment: this._fontSizeAdjustment, wrap: false }); // 3 - font size row
+        this._fontSizeRow = new Adw.SpinRow({title: 'Font Size', adjustment: this._fontSizeAdjustment, wrap: false}); // 3 - font size row
         this._fontSizeRow.value = this._settings.get_int(size);
         this._fontSizeRow.connect('notify::value', () => {
             this._settings.set_int(size, this._fontSizeRow.value);
         });
 
         this._dropDownItems = new Gtk.StringList();
-        this._fontStyleRow = new Adw.ComboRow({ title: 'Select Font', model: this._dropDownItems }); // 4 - font style row
+        this._fontStyleRow = new Adw.ComboRow({title: 'Select Font', model: this._dropDownItems}); // 4 - font style row
         this._generateDropDownItems(fontStyle);
 
         if (text) { // no need to add for hint text
-            this._entryRow = new Adw.EntryRow({ title: 'enter text' }); // 5 - entry row
+            this._entryRow = new Adw.EntryRow({title: hintText}); // 5 - entry row
             this._entryRow.set_text(this._settings.get_string(text));
             this._entryRow.connect('changed', entry => {
                 this._settings.set_string(text, entry.get_text());
@@ -73,9 +74,22 @@ class CreateGroup extends Adw.PreferencesGroup {
         this.add(this._colorRow);
         this.add(this._fontSizeRow);
         this.add(this._fontStyleRow);
-        if (text) {
+        if (text)
             this.add(this._entryRow);
-        }
+    }
+
+    _resetColorButton(button, key) {
+        let resetButton = new Gtk.Button();
+        resetButton.set_label('Reset');
+        resetButton.connect('clicked', () => {
+            let rgba = new Gdk.RGBA();
+            let hexString = '#ABCDEF00';
+            rgba.parse(hexString);
+            button.set_rgba(rgba);
+            this._settings.set_string(key, '');
+        });
+
+        return resetButton;
     }
 
     async _generateDropDownItems(fontStyle) {
@@ -93,11 +107,11 @@ class CreateGroup extends Adw.PreferencesGroup {
         });
     }
 
-    _onPanelColorChanged() {
+    _onPanelColorChanged(color) {
         let rgba = this._colorButton.rgba;
         let css = rgba.to_string();
         let hexString = this._cssHexString(css);
-        this._settings.set_string(this._key, hexString);
+        this._settings.set_string(color, hexString);
     }
 
     _cssHexString(css) {
