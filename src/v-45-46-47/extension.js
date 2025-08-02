@@ -9,7 +9,7 @@ import ModifiedClock from './ModifiedClock.js';
 export default class CustomizeClockOnLockScreenExtension extends Extension {
     enable() {
         this._settings = this.getSettings();
-        
+
         this._screenShieldDialog = Main.screenShield._dialog;
         this._originalPromptBox = this._screenShieldDialog._promptBox;
         this._originalClock = this._screenShieldDialog._clock;
