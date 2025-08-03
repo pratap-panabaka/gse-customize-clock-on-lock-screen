@@ -13,7 +13,7 @@
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 
-import {recursiveFileOperation, recursiveGetFileNamesCallback} from './recursiveFileOperation.js';
+import { recursiveFileOperation, recursiveGetFileNamesCallback } from './recursiveFileOperation.js';
 
 const FONT_DIRECTORIES = [`${GLib.get_user_data_dir()}/fonts`, '/usr/local/share/fonts', '/usr/share/fonts'];
 
@@ -29,7 +29,8 @@ const getFonts = async () => {
         .filter(name => name.endsWith('.ttf') || name.endsWith('.otf')) // get only font files
         .map(name => name.slice(0, -4)) // remove file extension
         .map(s => s.split('-')[0]) // remove hypen and after
-        .map(s => s.split(/(?<=[a-z])(?=[A-Z])/).join(' ')); // based on Font naming convention split the strig with Capital letters
+        .map(s => s.split(/(?<=[a-z])(?=[A-Z])/).join(' ')) // based on Font naming convention split the strig with Capital letters
+        .sort();
 
     return [...new Set(modified)];
 };
