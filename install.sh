@@ -19,9 +19,7 @@ echo -e "\n\n\t~~~~~~~~~~~~~~~~ Customize Clock On Lock Screen ~~~~~~~~~~~~~~~~\
 echo -e "\trunning the script...\n"
 echo -e "\t1. gnome-shell version $SHELL_VERSION detected"
 
-if [[ $SHELL_VERSION -ge 45 && $SHELL_VERSION -lt 48 ]]; then
-  cd src/v-45-46-47
-elif [[ $SHELL_VERSION -ge 48 ]]; then
+if [[ $SHELL_VERSION -ge 45 ]]; then
   cd src/v-48
 fi
 

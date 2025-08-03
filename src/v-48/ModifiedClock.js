@@ -4,90 +4,142 @@ import GnomeDesktop from 'gi://GnomeDesktop';
 import Clutter from 'gi://Clutter';
 import Shell from 'gi://Shell';
 
-import { formatDateWithCFormatString } from 'resource:///org/gnome/shell/misc/dateUtils.js';
+import {formatDateWithCFormatString} from 'resource:///org/gnome/shell/misc/dateUtils.js';
+import * as Config from 'resource:///org/gnome/shell/misc/config.js';
+
 import execCommunicate from './utils/getCommandOutput.js';
 
 const HINT_TIMEOUT = 4;
 const CROSSFADE_TIME = 300;
+const SHELL_VERSION = parseInt(Config.PACKAGE_VERSION.split(' ')[0]);
 
 const ModifiedClock = GObject.registerClass(
     class ModifiedClock extends St.BoxLayout {
         _init(settings) {
-            super._init({
+            let initObj = {
                 style_class: 'unlock-dialog-clock',
-                orientation: Clutter.Orientation.VERTICAL,
                 y_align: Clutter.ActorAlign.CENTER,
-            });
+            };
+
+            if (SHELL_VERSION >= 48)
+                initObj.orientation = Clutter.Orientation.VERTICAL;
+            else
+                initObj.vertical = true;
+
+
+            super._init(initObj);
 
             this._settings = settings;
-            this._customStyle = this._settings.get_boolean('custom-style');
-            this._customizeClock = this._settings.get_string('custom-time-text');
-            this._customizeDate = this._settings.get_string('custom-date-text');
 
-            this._commandText = new St.Label({
+            this._customTimeText = this._settings.get_string('custom-time-text');
+            this._customDateText = this._settings.get_string('custom-date-text');
+
+            let color, size, style, css;
+
+            // command output as text
+            this._commandOutput = new St.Label({
+                style_class: 'customize-clock-ext-cmd-output-text',
+                x_align: Clutter.ActorAlign.CENTER,
+            });
+
+            color = this._settings.get_string('command-output-font-color');
+            size = this._settings.get_int('command-output-font-size');
+            style = this._settings.get_string('command-output-font-style');
+
+            css = '';
+            if (color)
+                css += `color: ${color};\n`;
+
+            if (size)
+                css += `font-size: ${size}px;\n`;
+
+            if (style)
+                css += `font-family: ${style};\n`;
+
+            css += 'text-align: center;';
+
+            this._commandOutput.set_style(css);
+            this._commandOutput.clutter_text.set_line_wrap(true);
+            //
+
+            // time text
+            this._time = new St.Label({
+                style_class: 'unlock-dialog-clock-time',
+                x_align: Clutter.ActorAlign.CENTER,
+            });
+
+            color = this._settings.get_string('time-font-color');
+            size = this._settings.get_int('time-font-size');
+            style = this._settings.get_string('time-font-style');
+
+            css = '';
+            if (color)
+                css += `color: ${color};\n`;
+
+            if (size)
+                css += `font-size: ${size}px;\n`;
+
+            if (style)
+                css += `font-family: ${style};\n`;
+
+            this._time.set_style(css);
+            //
+
+            // date text
+            this._date = new St.Label({
                 style_class: 'unlock-dialog-clock-date',
                 x_align: Clutter.ActorAlign.CENTER,
             });
 
-            this._commandText.set_style(this._customStyle
-                ? `color: ${this._settings.get_string('custom-command-font-color')};
-                        font-size: ${this._settings.get_int('custom-command-font-size')}px;
-                        font-family: ${this._settings.get_string('font-style')}, serif;
-                        text-align: center;
-                        `
-                : null
-            );
+            color = this._settings.get_string('date-font-color');
+            size = this._settings.get_int('date-font-size');
+            style = this._settings.get_string('date-font-style');
 
-            this._commandText.clutter_text.set_line_wrap(true);
+            css = '';
+            if (color)
+                css += `color: ${color};\n`;
 
-            this._time = new St.Label({
-                style_class: this._customStyle ? null : 'unlock-dialog-clock-time',
-                x_align: Clutter.ActorAlign.CENTER,
-            });
+            if (size)
+                css += `font-size: ${size}px;\n`;
 
-            this._time.set_style(this._customStyle
-                ? `color: ${this._settings.get_string('time-color')};
-                        font-size: ${this._settings.get_int('time-size')}px;
-                        font-family: ${this._settings.get_string('font-style')}, serif;
-                        `
-                : null
-            );
+            if (style)
+                css += `font-family: ${style};\n`;
 
-            this._date = new St.Label({
-                style_class: this._customStyle ? null : 'unlock-dialog-clock-date',
-                x_align: Clutter.ActorAlign.CENTER,
-            });
+            this._date.set_style(css);
+            //
 
-            this._date.set_style(this._customStyle
-                ? `color: ${this._settings.get_string('date-color')};
-                        font-size: ${this._settings.get_int('date-size')}px;
-                        font-family: ${this._settings.get_string('font-style')}, serif;
-                        `
-                : null
-            );
-
+            // hint text
             this._hint = new St.Label({
-                style_class: this._customStyle ? null : 'unlock-dialog-clock-hint',
+                style_class: 'unlock-dialog-clock-hint',
                 x_align: Clutter.ActorAlign.CENTER,
                 opacity: 0,
             });
 
-            this._hint.set_style(
-                this._customStyle
-                    ? `color: ${this._settings.get_string('hint-color')};
-                        font-size: ${this._settings.get_int('hint-size')}px;
-                        font-family: ${this._settings.get_string('font-style')}, serif;
-                        `
-                    : null
-            );
+            color = this._settings.get_string('hint-font-color');
+            size = this._settings.get_int('hint-font-size');
+            style = this._settings.get_string('hint-font-style');
 
-            const removeCustomCommand = this._settings.get_boolean('remove-custom-command-output');
+            css = '';
+            if (color)
+                css += `color: ${color};\n`;
+
+            if (size)
+                css += `font-size: ${size}px;\n`;
+
+            if (style)
+                css += `font-family: ${style};\n`;
+
+            this._hint.set_style(css);
+            //
+
+            const removeCustomCommand = this._settings.get_boolean('remove-command-output');
+            const command = this._settings.get_string('command');
             const removeTime = this._settings.get_boolean('remove-time');
             const removeDate = this._settings.get_boolean('remove-date');
             const removeHint = this._settings.get_boolean('remove-hint');
 
-            if (!removeCustomCommand) {
-                this.add_child(this._commandText);
+            if (!removeCustomCommand && command) {
+                this.add_child(this._commandOutput);
                 this._createCommandText();
             }
 
@@ -100,11 +152,16 @@ const ModifiedClock = GObject.registerClass(
             if (!removeHint)
                 this.add_child(this._hint);
 
-            this._wallClock = new GnomeDesktop.WallClock({ time_only: true });
+            this._wallClock = new GnomeDesktop.WallClock({time_only: true});
             this._wallClock.connect('notify::clock', this._updateClock.bind(this));
 
-            const backend = this.get_context().get_backend();
-            this._seat = backend.get_default_seat();
+            if (SHELL_VERSION >= 48) {
+                const backend = this.get_context().get_backend();
+                this._seat = backend.get_default_seat();
+            } else {
+                this._seat = Clutter.get_default_backend().get_default_seat();
+            }
+
             this._seat.connectObject('notify::touch-mode',
                 this._updateHint.bind(this), this);
 
@@ -126,34 +183,37 @@ const ModifiedClock = GObject.registerClass(
 
         async _createCommandText() {
             try {
-                const text = await execCommunicate(this._settings.get_string('custom-command').split(' '));
-                this._commandText.text = text;
+                const text = await execCommunicate(this._settings.get_string('command').split(' '));
+                this._commandOutput.text = text;
             } catch (e) {
                 console.log(e);
-                this._commandText.text = 'Sorry Command Output has thrown error'
+                this._commandOutput.text = 'Sorry Command Output has thrown error';
             }
         }
 
         _updateClock() {
             let date = new Date();
-            let dateFormat = Shell.util_translate_time_string('%A %B %-d');
 
-            let timeFormat = Shell.util_translate_time_string(this._customizeClock);
-            let customDateFormat = Shell.util_translate_time_string(this._customizeDate);
+            // time
+            if (this._customTimeText?.startsWith('%')) {
+                let customTimeFormat = Shell.util_translate_time_string(this._customTimeText);
+                this._time.text = formatDateWithCFormatString(date, customTimeFormat);
+            } else if (this._customTimeText) {
+                this._time.text = this._customTimeText;
+            } else {
+                this._time.text = this._wallClock.clock.trim();
+            }
 
-            if (!this._customizeClock)
-                this._time.text = this._wallClock.clock;
-            else if (this._customizeClock.startsWith('%'))
-                this._time.text = formatDateWithCFormatString(date, timeFormat);
-            else
-                this._time.text = this._customizeClock;
-
-            if (!this._customizeDate)
-                this._date.text = formatDateWithCFormatString(date, dateFormat);
-            else if (this._customizeDate.startsWith('%'))
+            // date
+            if (this._customDateText?.startsWith('%')) {
+                let customDateFormat = Shell.util_translate_time_string(this._customDateText);
                 this._date.text = formatDateWithCFormatString(date, customDateFormat);
-            else
-                this._date.text = this._customizeDate;
+            } else if (this._customDateText) {
+                this._date.text = this._customDateText;
+            } else {
+                let dateFormat = Shell.util_translate_time_string('%A %B %-d');
+                this._date.text = formatDateWithCFormatString(date, dateFormat);
+            }
         }
 
         _updateHint() {

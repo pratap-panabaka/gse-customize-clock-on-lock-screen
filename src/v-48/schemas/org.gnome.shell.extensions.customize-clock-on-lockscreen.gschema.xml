@@ -2,81 +2,9 @@
   <schema id="org.gnome.shell.extensions.customize-clock-on-lockscreen"
     path="/org/gnome/shell/extensions/customize-clock-on-lockscreen/">
 
-    <key name="custom-style" type="b">
-      <default>true</default>
-      <summary>customize style</summary>
-      <description></description>
-    </key>
-
-    <key name="custom-command-font-color" type="s">
-      <default>"#456789"</default>
-      <summary>custom-command-font-color</summary>
-      <description></description>
-    </key>
-
-    <key name="time-color" type="s">
-      <default>"#456789"</default>
-      <summary>time-color</summary>
-      <description></description>
-    </key>
-
-    <key name="date-color" type="s">
-      <default>"#456789"</default>
-      <summary>date-color</summary>
-      <description></description>
-    </key>
-
-    <key name="hint-color" type="s">
-      <default>"#456789"</default>
-      <summary>hint-color</summary>
-      <description></description>
-    </key>
-
-    <key name="custom-command-font-size" type="i">
-      <default>32</default>
-      <summary>custom-command-font-size</summary>
-      <description></description>
-    </key>
-
-    <key name="time-size" type="i">
-      <default>96</default>
-      <summary>time-font-size</summary>
-      <description></description>
-    </key>
-
-    <key name="date-size" type="i">
-      <default>27</default>
-      <summary>date-font-size</summary>
-      <description></description>
-    </key>
-
-    <key name="hint-size" type="i">
-      <default>20</default>
-      <summary>hint-font-size</summary>
-      <description></description>
-    </key>
-
-    <key name="custom-time-text" type="s">
-      <default>''</default>
-      <summary>customize clock format</summary>
-      <description></description>
-    </key>
-
-    <key name="custom-date-text" type="s">
-      <default>''</default>
-      <summary>customize date format</summary>
-      <description></description>
-    </key>
-
-    <key name="custom-command" type="s">
-      <default>''</default>
-      <summary>custom command</summary>
-      <description></description>
-    </key>
-
-    <key name="remove-custom-command-output" type="b">
+    <key name="remove-command-output" type="b">
       <default>false</default>
-      <summary>Remove Custom Command Output</summary>
+      <summary>Remove Command Output</summary>
       <description></description>
     </key>
 
@@ -98,7 +26,85 @@
       <description></description>
     </key>
 
-    <key name="font-style" type="s">
+    <key name="command-output-font-color" type="s">
+      <default>"#456789"</default>
+      <summary>custom-command-font-color</summary>
+      <description></description>
+    </key>
+
+    <key name="time-font-color" type="s">
+      <default>"#456789"</default>
+      <summary>time-color</summary>
+      <description></description>
+    </key>
+
+    <key name="date-font-color" type="s">
+      <default>"#456789"</default>
+      <summary>date-color</summary>
+      <description></description>
+    </key>
+
+    <key name="hint-font-color" type="s">
+      <default>"#456789"</default>
+      <summary>hint-color</summary>
+      <description></description>
+    </key>
+
+    <key name="command-output-font-size" type="i">
+      <default>32</default>
+      <summary>command-output-font-size</summary>
+      <description></description>
+    </key>
+
+    <key name="time-font-size" type="i">
+      <default>96</default>
+      <summary>time-font-size</summary>
+      <description></description>
+    </key>
+
+    <key name="date-font-size" type="i">
+      <default>27</default>
+      <summary>date-font-size</summary>
+      <description></description>
+    </key>
+
+    <key name="hint-font-size" type="i">
+      <default>20</default>
+      <summary>hint-font-size</summary>
+      <description></description>
+    </key>
+
+    <key name="command" type="s">
+      <default>"fortune"</default>
+      <summary>custom command</summary>
+      <description></description>
+    </key>
+
+    <key name="custom-time-text" type="s">
+      <default>''</default>
+      <summary>customize clock format</summary>
+      <description></description>
+    </key>
+
+    <key name="custom-date-text" type="s">
+      <default>''</default>
+      <summary>customize date format</summary>
+      <description></description>
+    </key>
+
+    <key name="command-output-font-style" type="s">
+      <default>'Cantarell'</default>
+    </key>
+
+    <key name="time-font-style" type="s">
+      <default>'Cantarell'</default>
+    </key>
+
+    <key name="date-font-style" type="s">
+      <default>'Cantarell'</default>
+    </key>
+
+    <key name="hint-font-style" type="s">
       <default>'Cantarell'</default>
     </key>
 

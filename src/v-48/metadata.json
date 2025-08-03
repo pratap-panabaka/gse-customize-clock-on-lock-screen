@@ -10,9 +10,12 @@
   ],
   "settings-schema": "org.gnome.shell.extensions.customize-clock-on-lockscreen",
   "shell-version": [
+    "45",
+    "46",
+    "47",
     "48"
   ],
   "url": "https://github.com/pratap-panabaka/gse-customize-clock-on-lock-screen",
   "uuid": "CustomizeClockOnLockScreen@pratap.fastmail.fm",
-  "version": 19
+  "version": 20
 }
