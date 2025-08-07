@@ -39,7 +39,7 @@ const ModifiedClock = GObject.registerClass(
 
             // command output as text
             this._commandOutput = new St.Label({
-                style_class: 'customize-clock-ext-cmd-output-text',
+                style_class: 'unlock-dialog-clock-date',
                 x_align: Clutter.ActorAlign.CENTER,
             });
 
@@ -99,9 +99,10 @@ const ModifiedClock = GObject.registerClass(
             if (style !== DEFAULT)
                 css += `font-style: ${style};\n`;
 
-            if (css !== '')
-                this._time.set_style(css);
+            css += 'text-align: center;';
 
+            this._time.set_style(css);
+            this._time.clutter_text.set_line_wrap(true);
             //
 
             // date text
@@ -132,9 +133,10 @@ const ModifiedClock = GObject.registerClass(
             if (style !== DEFAULT)
                 css += `font-style: ${style};\n`;
 
-            if (css !== '')
-                this._date.set_style(css);
+            css += 'text-align: center;';
 
+            this._date.set_style(css);
+            this._date.clutter_text.set_line_wrap(true);
             //
 
             // hint text
@@ -168,7 +170,6 @@ const ModifiedClock = GObject.registerClass(
 
             if (css !== '')
                 this._hint.set_style(css);
-
             //
 
             const removeCustomCommand = this._settings.get_boolean('remove-command-output');

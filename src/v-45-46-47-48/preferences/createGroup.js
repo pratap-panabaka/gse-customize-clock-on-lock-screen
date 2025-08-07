@@ -11,7 +11,7 @@ class CreateGroup extends Adw.PreferencesGroup {
         GObject.registerClass(this);
     }
 
-    constructor(title, settings, keysArray, hintText, fonts) {
+    constructor(title, settings, keysArray, hintText) {
         super({
             title,
         });
@@ -60,19 +60,19 @@ class CreateGroup extends Adw.PreferencesGroup {
         this._fontSizeRow.add_suffix(this._resetFontSize(size, reset));
 
         model = new Gtk.StringList();
-        comboRow = new Adw.ComboRow({title: 'Font Family', model}); // 4 - font style row
+        comboRow = new Adw.ComboRow({title: 'Font Family', model}); // 4 - font family row
         this.add(comboRow);
-        new DropDownWidget(this._settings, comboRow, model, family, fonts);
+        new DropDownWidget(this._settings, comboRow, model, family);
 
         model = new Gtk.StringList();
         comboRow = new Adw.ComboRow({title: 'Font Weight', model}); // 5 - font weight row
         this.add(comboRow);
-        new DropDownWidget(this._settings, comboRow, model, weight, fonts);
+        new DropDownWidget(this._settings, comboRow, model, weight);
 
         model = new Gtk.StringList();
         comboRow = new Adw.ComboRow({title: 'Font Style', model}); // 6 - font style row
         this.add(comboRow);
-        new DropDownWidget(this._settings, comboRow, model, style, fonts);
+        new DropDownWidget(this._settings, comboRow, model, style);
 
         if (text) { // no need to add for hint text
             this._entryRow = new Adw.EntryRow({title: hintText}); // 7 - entry row
