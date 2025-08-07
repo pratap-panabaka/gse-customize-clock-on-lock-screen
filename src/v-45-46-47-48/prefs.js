@@ -3,10 +3,12 @@ import Gtk from 'gi://Gtk';
 
 import {ExtensionPreferences} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 import CreateGroup from './preferences/createGroup.js';
+import getFonts from './utils/getFonts.js';
 
 export default class CustomizeClockExtensionPreferences extends ExtensionPreferences {
-    fillPreferencesWindow(window) {
+    async fillPreferencesWindow(window) {
         window._settings = this.getSettings();
+        window._fonts = await getFonts();
 
         let gsettingsKeys;
         let group;
@@ -16,8 +18,8 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
             icon_name: 'preferences-system-symbolic',
         });
 
-        gsettingsKeys = ['remove-command-output', 'command-output-font-color', 'command-output-font-size', 'command', 'command-output-font-style', 48];
-        group = new CreateGroup('Command Output as Text', window._settings, gsettingsKeys, 'Enter bash command - the output will be displayed on lockscreen');
+        gsettingsKeys = ['remove-command-output', 'command-output-font-color', 'command-output-font-size', 'command', 'command-output-font-family', 'command-output-font-weight', 'command-output-font-style', 48];
+        group = new CreateGroup('Command Output as Text', window._settings, gsettingsKeys, 'Enter bash command - the output will be displayed on lockscreen', window._fonts);
         pageOne.add(group);
 
         const pageTwo = new Adw.PreferencesPage({
@@ -25,8 +27,8 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
             icon_name: 'preferences-system-symbolic',
         });
 
-        gsettingsKeys = ['remove-time', 'time-font-color', 'time-font-size', 'custom-time-text', 'time-font-style', 96];
-        group = new CreateGroup('Clock Time', window._settings, gsettingsKeys, 'Leave it blank for default time format');
+        gsettingsKeys = ['remove-time', 'time-font-color', 'time-font-size', 'custom-time-text', 'time-font-family', 'time-font-weight', 'time-font-style', 96];
+        group = new CreateGroup('Clock Time', window._settings, gsettingsKeys, 'Leave it blank for default time format', window._fonts);
         pageTwo.add(group);
         pageTwo.add(this._createFormatsHelp());
 
@@ -35,8 +37,8 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
             icon_name: 'preferences-system-symbolic',
         });
 
-        gsettingsKeys = ['remove-date', 'date-font-color', 'date-font-size', 'custom-date-text', 'date-font-style', 28];
-        group = new CreateGroup('Clock Date', window._settings, gsettingsKeys, 'Leave it blank for default date format');
+        gsettingsKeys = ['remove-date', 'date-font-color', 'date-font-size', 'custom-date-text', 'date-font-family', 'date-font-weight', 'date-font-style', 28];
+        group = new CreateGroup('Clock Date', window._settings, gsettingsKeys, 'Leave it blank for default date format', window._fonts);
 
         pageThree.add(group);
         pageThree.add(this._createFormatsHelp());
@@ -46,8 +48,8 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
             icon_name: 'preferences-system-symbolic',
         });
 
-        gsettingsKeys = ['remove-hint', 'hint-font-color', 'hint-font-size', null, 'hint-font-style', 20];
-        group = new CreateGroup('Unlock Hint', window._settings, gsettingsKeys, null);
+        gsettingsKeys = ['remove-hint', 'hint-font-color', 'hint-font-size', null, 'hint-font-family', 'hint-font-weight', 'hint-font-style', 20];
+        group = new CreateGroup('Unlock Hint', window._settings, gsettingsKeys, null, window._fonts);
         pageFour.add(group);
 
         window.add(pageOne);

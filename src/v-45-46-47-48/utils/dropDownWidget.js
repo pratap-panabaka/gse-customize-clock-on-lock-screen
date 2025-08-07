@@ -1,20 +1,39 @@
-import Gtk from 'gi://Gtk';
+class DropDownWidget {
+    constructor(settings, comboRow, model, key, fonts) {
+        model.append('Default');
 
-class FontsDropDown {
-    constructor(settings, model) {
-        this._settings = settings;
-        this._model = model;
-        this._dropdown = new Gtk.DropDown({
-            model,
-            selected: 0,
-        });
+        if (key.endsWith('family')) {
+            fonts.forEach(font => model.append(font));
+        } else if (key.endsWith('weight')) {
+            const weights = [100, 200, 300, 400, 500, 600, 700, 800, 900].map(String);
+            weights.forEach(wt => model.append(wt));
+        } else if (key.endsWith('style')) {
+            const styles = ['normal', 'italic', 'oblique'];
+            styles.forEach(sty => model.append(sty));
+        }
 
-        this._dropdown.connect('notify::selected', () => {
-            const index = this._dropdown.get_selected();
-            const selected = this._model.get_string(index);
-            this._settings.set_string('font-style', selected);
+        const strToIndex = {};
+        const indexToString = {};
+
+        for (let i = 0; i < model.get_n_items(); i++) {
+            const str = model.get_item(i).get_string();
+            strToIndex[str] = i;
+            indexToString[i] = str;
+        }
+
+        const current = settings.get_string(key);
+
+        if (current in strToIndex)
+            comboRow.selected = strToIndex[current];
+
+
+        comboRow.connect('notify::selected', () => {
+            const selectedIndex = comboRow.selected;
+            const selectedString = indexToString[selectedIndex];
+
+            settings.set_string(key, selectedString);
         });
     }
 }
 
-export default FontsDropDown;
+export default DropDownWidget;

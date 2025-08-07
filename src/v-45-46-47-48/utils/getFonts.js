@@ -13,7 +13,7 @@
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 
-import { recursiveFileOperation, recursiveGetFileNamesCallback } from './recursiveFileOperation.js';
+import {recursiveFileOperation, recursiveGetFileNamesCallback} from './recursiveFileOperation.js';
 
 const FONT_DIRECTORIES = [`${GLib.get_user_data_dir()}/fonts`, '/usr/local/share/fonts', '/usr/share/fonts'];
 

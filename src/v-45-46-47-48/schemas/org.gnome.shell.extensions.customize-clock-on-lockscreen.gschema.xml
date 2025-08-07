@@ -27,55 +27,59 @@
     </key>
 
     <key name="command-output-font-color" type="s">
-      <default>"#456789"</default>
+      <default>'#FFF4B1'</default>
       <summary>custom-command-font-color</summary>
       <description></description>
     </key>
 
     <key name="time-font-color" type="s">
-      <default>"#456789"</default>
+      <default>'#A0E6A3'</default>
       <summary>time-color</summary>
       <description></description>
     </key>
 
     <key name="date-font-color" type="s">
-      <default>"#456789"</default>
+      <default>'#F25C54'</default>
       <summary>date-color</summary>
       <description></description>
     </key>
 
     <key name="hint-font-color" type="s">
-      <default>"#456789"</default>
+      <default>'#D4ED8A'</default>
       <summary>hint-color</summary>
       <description></description>
     </key>
 
     <key name="command-output-font-size" type="i">
-      <default>32</default>
+      <default>48</default>
+      <range min="20" max="96"></range>
       <summary>command-output-font-size</summary>
       <description></description>
     </key>
 
     <key name="time-font-size" type="i">
       <default>96</default>
+      <range min="20" max="96"></range>
       <summary>time-font-size</summary>
       <description></description>
     </key>
 
     <key name="date-font-size" type="i">
-      <default>27</default>
+      <default>28</default>
+      <range min="20" max="96"></range>
       <summary>date-font-size</summary>
       <description></description>
     </key>
 
     <key name="hint-font-size" type="i">
       <default>20</default>
+      <range min="20" max="96"></range>
       <summary>hint-font-size</summary>
       <description></description>
     </key>
 
     <key name="command" type="s">
-      <default>"fortune"</default>
+      <default>'whoami'</default>
       <summary>custom command</summary>
       <description></description>
     </key>
@@ -92,20 +96,52 @@
       <description></description>
     </key>
 
+    <key name="command-output-font-family" type="s">
+      <default>'Default'</default>
+    </key>
+
+    <key name="time-font-family" type="s">
+      <default>'Default'</default>
+    </key>
+
+    <key name="date-font-family" type="s">
+      <default>'Default'</default>
+    </key>
+
+    <key name="hint-font-family" type="s">
+      <default>'Default'</default>
+    </key>
+
+    <key name="command-output-font-weight" type="s">
+      <default>'Default'</default>
+    </key>
+
+    <key name="time-font-weight" type="s">
+      <default>'Default'</default>
+    </key>
+
+    <key name="date-font-weight" type="s">
+      <default>'Default'</default>
+    </key>
+
+    <key name="hint-font-weight" type="s">
+      <default>'Default'</default>
+    </key>
+
     <key name="command-output-font-style" type="s">
-      <default>'Cantarell'</default>
+      <default>'Default'</default>
     </key>
 
     <key name="time-font-style" type="s">
-      <default>'Cantarell'</default>
+      <default>'Default'</default>
     </key>
 
     <key name="date-font-style" type="s">
-      <default>'Cantarell'</default>
+      <default>'Default'</default>
     </key>
 
     <key name="hint-font-style" type="s">
-      <default>'Cantarell'</default>
+      <default>'Default'</default>
     </key>
 
   </schema>

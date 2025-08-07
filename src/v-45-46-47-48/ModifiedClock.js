@@ -26,7 +26,6 @@ const ModifiedClock = GObject.registerClass(
             else
                 initObj.vertical = true;
 
-
             super._init(initObj);
 
             this._settings = settings;
@@ -34,7 +33,9 @@ const ModifiedClock = GObject.registerClass(
             this._customTimeText = this._settings.get_string('custom-time-text');
             this._customDateText = this._settings.get_string('custom-date-text');
 
-            let color, size, style, css;
+            const DEFAULT = 'Default';
+
+            let color, size, family, weight, style, css;
 
             // command output as text
             this._commandOutput = new St.Label({
@@ -44,6 +45,8 @@ const ModifiedClock = GObject.registerClass(
 
             color = this._settings.get_string('command-output-font-color');
             size = this._settings.get_int('command-output-font-size');
+            family = this._settings.get_string('command-output-font-family');
+            weight = this._settings.get_string('command-output-font-weight');
             style = this._settings.get_string('command-output-font-style');
 
             css = '';
@@ -53,8 +56,14 @@ const ModifiedClock = GObject.registerClass(
             if (size)
                 css += `font-size: ${size}px;\n`;
 
-            if (style)
-                css += `font-family: ${style};\n`;
+            if (family !== DEFAULT)
+                css += `font-family: "${family}", sans-serif;\n`;
+
+            if (weight !== DEFAULT)
+                css += `font-weight: ${weight};\n`;
+
+            if (style !== DEFAULT)
+                css += `font-style: ${style};\n`;
 
             css += 'text-align: center;';
 
@@ -70,6 +79,8 @@ const ModifiedClock = GObject.registerClass(
 
             color = this._settings.get_string('time-font-color');
             size = this._settings.get_int('time-font-size');
+            family = this._settings.get_string('time-font-family');
+            weight = this._settings.get_string('time-font-weight');
             style = this._settings.get_string('time-font-style');
 
             css = '';
@@ -79,10 +90,18 @@ const ModifiedClock = GObject.registerClass(
             if (size)
                 css += `font-size: ${size}px;\n`;
 
-            if (style)
-                css += `font-family: ${style};\n`;
+            if (family !== DEFAULT)
+                css += `font-family: "${family}", sans-serif;\n`;
 
-            this._time.set_style(css);
+            if (weight !== DEFAULT)
+                css += `font-weight: ${weight};\n`;
+
+            if (style !== DEFAULT)
+                css += `font-style: ${style};\n`;
+
+            if (css !== '')
+                this._time.set_style(css);
+
             //
 
             // date text
@@ -93,6 +112,8 @@ const ModifiedClock = GObject.registerClass(
 
             color = this._settings.get_string('date-font-color');
             size = this._settings.get_int('date-font-size');
+            family = this._settings.get_string('date-font-family');
+            weight = this._settings.get_string('date-font-weight');
             style = this._settings.get_string('date-font-style');
 
             css = '';
@@ -102,10 +123,18 @@ const ModifiedClock = GObject.registerClass(
             if (size)
                 css += `font-size: ${size}px;\n`;
 
-            if (style)
-                css += `font-family: ${style};\n`;
+            if (family !== DEFAULT)
+                css += `font-family: "${family}", sans-serif;\n`;
 
-            this._date.set_style(css);
+            if (weight !== DEFAULT)
+                css += `font-weight: ${weight};\n`;
+
+            if (style !== DEFAULT)
+                css += `font-style: ${style};\n`;
+
+            if (css !== '')
+                this._date.set_style(css);
+
             //
 
             // hint text
@@ -117,6 +146,8 @@ const ModifiedClock = GObject.registerClass(
 
             color = this._settings.get_string('hint-font-color');
             size = this._settings.get_int('hint-font-size');
+            family = this._settings.get_string('hint-font-family');
+            weight = this._settings.get_string('hint-font-weight');
             style = this._settings.get_string('hint-font-style');
 
             css = '';
@@ -126,10 +157,18 @@ const ModifiedClock = GObject.registerClass(
             if (size)
                 css += `font-size: ${size}px;\n`;
 
-            if (style)
-                css += `font-family: ${style};\n`;
+            if (family !== DEFAULT)
+                css += `font-family: "${family}", sans-serif;\n`;
 
-            this._hint.set_style(css);
+            if (weight !== DEFAULT)
+                css += `font-weight: ${weight};\n`;
+
+            if (style !== DEFAULT)
+                css += `font-style: ${style};\n`;
+
+            if (css !== '')
+                this._hint.set_style(css);
+
             //
 
             const removeCustomCommand = this._settings.get_boolean('remove-command-output');
