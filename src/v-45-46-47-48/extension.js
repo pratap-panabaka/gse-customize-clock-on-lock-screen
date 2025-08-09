@@ -15,8 +15,8 @@ export default class CustomizeClockOnLockScreenExtension extends Extension {
         this._originalClock = this._screenShieldDialog._clock;
         this._originalStack = this._screenShieldDialog._stack;
 
-        let currentMonitor = Main.layoutManager.currentMonitor;
-        let {x, y, width, height} = currentMonitor;
+        let primaryMonitor = Main.layoutManager.primaryMonitor;
+        let {x, y, width, height} = primaryMonitor;
 
         this._actorBox = new Clutter.ActorBox();
 
