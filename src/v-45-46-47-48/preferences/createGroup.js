@@ -21,7 +21,7 @@ class CreateGroup extends Adw.PreferencesGroup {
         const [remove, color, size, text, family, weight, style, reset] = keysArray;
         let model, comboRow;
 
-        this._removeRow = new Adw.SwitchRow({title: 'Remove'}); // 1 - remove row
+        this._removeRow = new Adw.SwitchRow({ title: 'Remove' }); // 1 - remove row
         this.add(this._removeRow);
 
         let rgba = new Gdk.RGBA();
@@ -35,7 +35,7 @@ class CreateGroup extends Adw.PreferencesGroup {
         });
         this._colorButton.connect('notify::rgba', this._onPanelColorChanged.bind(this, color));
 
-        this._colorRow = new Adw.ActionRow({title: 'Color'}); // 2 - font color row
+        this._colorRow = new Adw.ActionRow({ title: 'Color' }); // 2 - font color row
         this.add(this._colorRow);
         this._colorRow.add_suffix(this._colorButton);
         this._colorRow.add_suffix(this._resetColorButton(this._colorButton, color));
@@ -51,7 +51,7 @@ class CreateGroup extends Adw.PreferencesGroup {
             this._settings.set_int(size, entry.get_value());
         });
 
-        this._fontSizeRow = new Adw.SpinRow({title: 'Font Size', adjustment: this._fontSizeAdjustment, wrap: false}); // 3 - font size row
+        this._fontSizeRow = new Adw.SpinRow({ title: 'Font Size', adjustment: this._fontSizeAdjustment, wrap: false }); // 3 - font size row
         this.add(this._fontSizeRow);
         this._fontSizeRow.value = this._settings.get_int(size);
         this._fontSizeRow.connect('notify::value', () => {
@@ -60,22 +60,22 @@ class CreateGroup extends Adw.PreferencesGroup {
         this._fontSizeRow.add_suffix(this._resetFontSize(size, reset));
 
         model = new Gtk.StringList();
-        comboRow = new Adw.ComboRow({title: 'Font Family', model}); // 4 - font family row
+        comboRow = new Adw.ComboRow({ title: 'Font Family', model }); // 4 - font family row
         this.add(comboRow);
         new DropDownWidget(this._settings, comboRow, model, family);
 
         model = new Gtk.StringList();
-        comboRow = new Adw.ComboRow({title: 'Font Weight', model}); // 5 - font weight row
+        comboRow = new Adw.ComboRow({ title: 'Font Weight', model }); // 5 - font weight row
         this.add(comboRow);
         new DropDownWidget(this._settings, comboRow, model, weight);
 
         model = new Gtk.StringList();
-        comboRow = new Adw.ComboRow({title: 'Font Style', model}); // 6 - font style row
+        comboRow = new Adw.ComboRow({ title: 'Font Style', model }); // 6 - font style row
         this.add(comboRow);
         new DropDownWidget(this._settings, comboRow, model, style);
 
         if (text) { // no need to add for hint text
-            this._entryRow = new Adw.EntryRow({title: hintText}); // 7 - entry row
+            this._entryRow = new Adw.EntryRow({ title: hintText }); // 7 - entry row
             this._entryRow.set_text(this._settings.get_string(text));
             this._entryRow.connect('changed', entry => {
                 this._settings.set_string(text, entry.get_text());
@@ -113,36 +113,8 @@ class CreateGroup extends Adw.PreferencesGroup {
 
     _onPanelColorChanged(color) {
         let rgba = this._colorButton.rgba;
-        let css = rgba.to_string();
-        let hexString = this._cssHexString(css);
-        this._settings.set_string(color, hexString);
-    }
-
-    _cssHexString(css) {
-        let rrggbb = '#';
-        let start;
-        for (let loop = 0; loop < 3; loop++) {
-            let end = 0;
-            let xx = '';
-            for (let loop1 = 0; loop1 < 2; loop1++) {
-                while (true) {
-                    let x = css.slice(end, end + 1);
-                    if (x === '(' || x === ',' || x === ')')
-                        break;
-                    end += 1;
-                }
-                if (loop1 === 0) {
-                    end += 1;
-                    start = end;
-                }
-            }
-            xx = parseInt(css.slice(start, end)).toString(16);
-            if (xx.length === 1)
-                xx = `0${xx}`;
-            rrggbb += xx;
-            css = css.slice(end);
-        }
-        return rrggbb;
+        let css = `rgba(${Math.round(rgba.red * 255)}, ${Math.round(rgba.green * 255)}, ${Math.round(rgba.blue * 255)}, ${rgba.alpha})`;
+        this._settings.set_string(color, css);
     }
 }
 

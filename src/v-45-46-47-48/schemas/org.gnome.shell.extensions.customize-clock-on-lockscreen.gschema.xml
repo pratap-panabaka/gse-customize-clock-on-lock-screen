@@ -27,25 +27,25 @@
     </key>
 
     <key name="command-output-font-color" type="s">
-      <default>'#FFF4B1'</default>
+      <default>'rgba(255, 244, 177, 1.0)'</default>
       <summary>custom-command-font-color</summary>
       <description></description>
     </key>
 
     <key name="time-font-color" type="s">
-      <default>'#A0E6A3'</default>
+      <default>'rgba(160, 230, 163, 1.0)'</default>
       <summary>time-color</summary>
       <description></description>
     </key>
 
     <key name="date-font-color" type="s">
-      <default>'#F25C54'</default>
+      <default>'rgba(242, 92, 84, 1.0)'</default>
       <summary>date-color</summary>
       <description></description>
     </key>
 
     <key name="hint-font-color" type="s">
-      <default>'#D4ED8A'</default>
+      <default>'rgba(212, 237, 138, 1.0)'</default>
       <summary>hint-color</summary>
       <description></description>
     </key>
