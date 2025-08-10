@@ -15,7 +15,7 @@ const SHELL_VERSION = parseInt(Config.PACKAGE_VERSION.split(' ')[0]);
 
 const ModifiedClock = GObject.registerClass(
     class ModifiedClock extends St.BoxLayout {
-        _init(settings) {
+        _init(settings, width) {
             let initObj = {
                 style_class: 'unlock-dialog-clock',
                 y_align: Clutter.ActorAlign.CENTER,
@@ -65,7 +65,8 @@ const ModifiedClock = GObject.registerClass(
             if (style !== DEFAULT)
                 css += `font-style: ${style};\n`;
 
-            css += 'text-align: center;';
+            css += 'text-align: center;\n';
+            css += `max-width: ${width}px;`;
 
             this._commandOutput.set_style(css);
             this._commandOutput.clutter_text.set_line_wrap(true);
@@ -99,7 +100,8 @@ const ModifiedClock = GObject.registerClass(
             if (style !== DEFAULT)
                 css += `font-style: ${style};\n`;
 
-            css += 'text-align: center;';
+            css += 'text-align: center;\n';
+            css += `max-width: ${width}px;`;
 
             this._time.set_style(css);
             this._time.clutter_text.set_line_wrap(true);
@@ -133,7 +135,8 @@ const ModifiedClock = GObject.registerClass(
             if (style !== DEFAULT)
                 css += `font-style: ${style};\n`;
 
-            css += 'text-align: center;';
+            css += 'text-align: center;\n';
+            css += `max-width: ${width}px;`;
 
             this._date.set_style(css);
             this._date.clutter_text.set_line_wrap(true);
