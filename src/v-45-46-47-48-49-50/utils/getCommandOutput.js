@@ -44,7 +44,7 @@ async function execCommunicate(argv, input = null, cancellable = null) {
         cancelId = cancellable.connect(() => proc.force_exit());
 
     try {
-        const [stdout, stderr] = await proc.communicate_utf8_async(input, null);
+        const [stdout, stderr] = await proc.communicate_utf8_async(input, cancellable);
 
         const status = proc.get_exit_status();
 

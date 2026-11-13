@@ -1,4 +1,5 @@
 import St from 'gi://St';
+import Gio from 'gi://Gio';
 import GObject from 'gi://GObject';
 import GnomeDesktop from 'gi://GnomeDesktop';
 import Clutter from 'gi://Clutter';
@@ -32,6 +33,8 @@ const ModifiedClock = GObject.registerClass(
             super._init(initObj);
 
             this._settings = settings;
+            this._commandCancellable = new Gio.Cancellable();
+            this.connect('destroy', this._onDestroy.bind(this));
 
             this._customTimeText = this._settings.get_string('custom-time-text');
             this._customDateText = this._settings.get_string('custom-date-text');
@@ -269,13 +272,17 @@ const ModifiedClock = GObject.registerClass(
 
             try {
                 const text = await execCommunicate(
-                    this._settings.get_string('command').split(' ')
+                    this._settings.get_string('command').split(' '),
+                    null, this._commandCancellable
                 );
 
-                this._commandOutput.text = text.trim();
+                if (!this._destroyed)
+                    this._commandOutput.text = text.trim();
             } catch (e) {
-                console.log(e);
-                this._commandOutput.text = 'Sorry Command Output has thrown error';
+                if (!this._destroyed) {
+                    console.log(e);
+                    this._commandOutput.text = 'Sorry Command Output has thrown error';
+                }
             } finally {
                 this._commandRunning = false;
             }
@@ -315,7 +322,16 @@ const ModifiedClock = GObject.registerClass(
             }
         }
 
+        selectAuthHint(hint) {
+            this._authHint = hint;
+            this._updateHint();
+        }
+
         _updateHint() {
+            if (this._authHint) {
+                this._hint.text = this._authHint;
+                return;
+            }
             this._hint.text = this._seat.touch_mode
                 ? 'Swipe up to unlock'
                 : 'Click or press a key to unlock';
@@ -609,7 +625,11 @@ const ModifiedClock = GObject.registerClass(
             };
         }
 
-        destroy() {
+        _onDestroy() {
+            this._destroyed = true;
+            this._commandCancellable.cancel();
+            this._seat.disconnectObject(this);
+            this._monitorManager.disconnectObject(this);
             this._idleMonitor.remove_watch(this._idleWatchId);
             if (this._clockTickId) {
                 GLib.source_remove(this._clockTickId);
@@ -633,8 +653,7 @@ const ModifiedClock = GObject.registerClass(
                 this._wallClock.disconnect(this._wallClockConnectId);
             }
 
-            if (this._)
-                super.destroy();
+            this._wallClock.run_dispose();
         }
     }
 );
