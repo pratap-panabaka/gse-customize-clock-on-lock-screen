@@ -8,8 +8,8 @@ UUID=$NAME@$DOMAIN
 echo -e "\n\n\t~~~~~~~~~~~~~~~~ Customize Clock On Lock Screen ~~~~~~~~~~~~~~~~\n"
 echo -e "\trunning the script...\n"
 
-if $(gnome-extensions list | grep -q $UUID); then
-    gnome-extensions uninstall $UUID
+if gnome-extensions list | grep -Fxq -- "$UUID"; then
+    gnome-extensions uninstall "$UUID"
 else
     echo -e "\tCustomize Clock On Lock Screen is not installed, exiting..."
     echo -e "\n\t~~~~~~~~~~~~~~~~~~ Thank You ~~~~~~~~~~~~~~~~~~\n\n"
